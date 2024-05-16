@@ -1,0 +1,35 @@
+#!/usr/bin/env python3
+import socket
+import subprocess
+import sys
+
+# Clear the screen
+subprocess.call('clear', shell=True)
+
+# Ask for input
+remoteServer = input("Enter a remote host to scan: ")
+remoteServerIP = socket.gethostbyname(remoteServer)
+
+# Print a banner with information on which host we are about to scan
+print("-" * 60)
+print(f"Please wait, scanning remote host {remoteServerIP}")
+print("-" * 60)
+
+# Using the range function to specify ports (Scan all ports between 1 and 1024)
+# We have to put some error handling for catching errors just because
+
+try:
+    for port in range(1, 1025):
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+            result = sock.connect_ex((remoteServerIP, port))
+            if result == 0:
+                print(f"Port {port}: Open")
+except KeyboardInterrupt:
+    print("You pressed Ctrl+C")
+    sys.exit()
+except socket.gaierror:
+    print('Hostname could not be resolved. Exiting')
+    sys.exit()
+except socket.error:
+    print("Couldn't connect to server")
+    sys.exit()
